@@ -33,6 +33,9 @@
             padding: 0px;
             font: 400 16px/1.5 "Hiragino Sans GB","Microsoft YaHei",hei,Arial,"Lucida Grande",Verdana;
         }
+        div{
+            width:100%;
+        }
 
         #div_game {
             position: relative;
@@ -107,7 +110,8 @@
         var h1 = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         var w = screen.availWidth;
         var h = screen.availHeight;
-        //h = h1;
+        w=w1;
+        h = h1;
         alert("w1：" + w1 + " h1：" + h1 + "     w：" + w + " h：" + h);
 
         if (w1 > 760 || h1 > 760) {
