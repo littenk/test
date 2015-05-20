@@ -1,5 +1,5 @@
 ﻿window.alert = alert = function (text) {
-    loadMack({ off: 'on', Limg: 0, text: text, set: 2000 });
+    loadMack({ off: 'on', Limg: 0, text: text, set: 200000 });
 }
 
 
