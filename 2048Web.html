@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!-- UC强制全屏 -->
     <meta name="full-screen" content="yes" />
@@ -13,35 +13,32 @@
     <!-- QQ应用模式 -->
     <meta name="x5-page-mode" content="app" />
 
-
     <meta name="x5-orientation" content="portrait"/><!-- QQ强制竖屏 -->
     <meta name="screen-orientation" content="portrait"/><!-- uc强制竖屏 -->
-    <meta name="apple-mobile-web-app-capable" content="yes" /> <!-- 启用 WebApp 全屏模式 -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="2048小游戏"/>
     <meta name="author" content="方学天"/>
      <meta name="keywords" content="HTML5经典游戏之2048"/>
-
+    
     <script src="script/jquery-1.7.2.min.js"></script>
     <script src="script/2048web.js"></script>
     <script src="script/common.js"></script>
 
-    <title>2048手机移动端</title>
+    <title>HTML5版本-2048</title>
     <style type="text/css">
         * {
             margin: 0px;
             padding: 0px;
             font: 400 16px/1.5 "Hiragino Sans GB","Microsoft YaHei",hei,Arial,"Lucida Grande",Verdana;
         }
-        div{
-            width:100%;
+        div {
+            width: 100%;
         }
-
         #div_game {
             position: relative;
             width: 100%;
             height: 100%;
             background-color: #eaeaea;
+            overflow: hidden;
         }
 
         .header {
@@ -54,16 +51,6 @@
                 line-height: 100px;
                 text-align: center;
             }
-
-        #div_getName {
-            line-height:200px;
-            text-align:center;
-            width:100%;
-            z-index:998005;
-        }
-        #btn_start {
-            padding:2px 10px;
-        }
 
         /*弹出框*/
         .loadMack {
@@ -90,50 +77,24 @@
     </style>
 </head>
 <body>
-    <div id="div_getName">
-        <span>2048</span><br />
-
-        <input type="text" name="username" id="username" placeholder="请输入你的名字"/>
-        <input type="button" id="btn_start" value="start"/>
-        <br />
-        <span style="color:red"> 我猜你会输</span>
-    </div>
     <div id="div_game">
-        <!-- <div class="header">
-            <h1>2048</h1>
-        </div>-->
-        <!--<canvas id="canvas_map" width="375"height="375" style="background-color: #BBADA0;position:relative;display:block;"></canvas>-->
     </div>
-    <div id="div_result"></div>
     <script type="text/javascript">
-        var w1 = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        var h1 = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        var w = screen.availWidth;
-        var h = screen.availHeight;
-        w=w1;
-        h = h1;
-        alert("w1：" + w1 + " h1：" + h1 + "     w：" + w + " h：" + h);
-
-        if (w1 > 760 || h1 > 760) {
-            //h= 650;
-            //h = 500;
-            //alert(w);
-        }
-        $("#div_getName").css("height", h);
+        //获取浏览器的高宽
+        var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         $("#div_game").css("height", h);
-        $("#div_game").css("display","none");
+        
         var fgz_w = null, fgz_p = null, blPortrait=false;
         if (w < h) {
             var myCanvas = "<div class='header'><h1>2048</h1></div><canvas id='canvas_map' width='" + w + "px' height='" + w + "px'></vanvas>";
-            //document.body.insertAdjacentHTML("beforeEnd", myCanvas);
             document.getElementById("div_game").insertAdjacentHTML("beforeEnd", myCanvas);
-            fgz_w = w / 5;
-            fgz_p = w / 26;
-            blPortrait = false;     //正常，使用W
+            fgz_w = w / 5;          //每一个方格子宽
+            fgz_p = w / 26;         //方格子之间间隔
+            blPortrait = false;     //一般手机端屏幕宽度小于高度，使用W
         }
         else {
             var myCanvas = "<canvas id='canvas_map' width='" + h + "px' height='" + h + "px' style='margin-left:" + w / 5 + "px;'></vanvas>";
-            //document.body.insertAdjacentHTML("beforeEnd", myCanvas);
             document.getElementById("div_game").insertAdjacentHTML("beforeEnd", myCanvas);
             fgz_w = h / 5;
             fgz_p = h / 25;
@@ -142,6 +103,7 @@
 
         var canvas_map = document.getElementById("canvas_map");
         var cxt = canvas_map.getContext("2d");
+        //var cxtBuffer = document.getElementById("canvas_map").getContext("2d");
 
         //一维数组
         var arrNums = new Array();
@@ -151,18 +113,15 @@
             arr[i] = new Array();
             for (var j = 0; j < 4; j++) {
                 arr[i][j] = null;
-                //arr[i][j] = i + "" + j;
             }
         }
+        getPic();
         //初始化游戏界面
         ininMap();
-
         //创建，初始化两个数字
         createNum();
         //画出数组中所有的图片
         drawAllImg();
-
-
 
         //刷新画布
         function flashMap(dir) {
@@ -192,7 +151,7 @@
 
 
 
-
+        //手机移动端触屏
         //开始触摸屏幕
         $("#canvas_map").on("touchstart", function (e) {
             start_x = e.originalEvent.targetTouches[0].pageX;
@@ -202,29 +161,23 @@
         $("#canvas_map").on("touchmove", function (e) {
             end_x = e.originalEvent.targetTouches[0].pageX;
             end_y = e.originalEvent.targetTouches[0].pageY;
-            //console.info(start_x + " " + end_x);
         });
         $("#canvas_map").on("touchend", function (e) {
             distanceX = end_x - start_x;
             distanceY = end_y - start_y;
             if ((distanceX < -50) && (Math.abs(distanceY) < 45)) {
-                //alert("左移");
                 flashMap(3);
             } else if ((distanceX > 50) && (Math.abs(distanceY) < 45)) {
-                //alert("右移");
                 flashMap(1);
             }
             if ((distanceY < -50) && (Math.abs(distanceX) < 45)) {
-                //alert("上移");
                 flashMap(0);
             } else if ((distanceY > 50) && (Math.abs(distanceX) < 45)) {
-                //alert("下移");
                 flashMap(2);
             }
         });
 
-
-
+        //接收电脑键盘输入的命令，分别为上下右左
         //接收命令
         document.onkeydown = function getCommand() {
             var code = event.which || event.keyCode;
@@ -247,16 +200,6 @@
             }
         }
 
-        $(function () {
-            $("#btn_start").click(function () {
-                if ($("#username").val().trim() == "") return;
-                if ($("#username").val().length>10 ) return;
-                $("#div_getName").css("display", "none");
-                $("#div_game").css("display", "block");
-                alert($("#canvas_map").height());
-                //zd = window.setInterval("aaaaaa()", 100);
-            });
-        });
     </script>
 </body>
 </html>
